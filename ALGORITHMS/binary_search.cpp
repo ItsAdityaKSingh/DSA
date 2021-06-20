@@ -112,12 +112,10 @@ double power(double a, double b) {
 	}
 
 	double div = 0.5;
-	double aClone = a;
-
 	while(point_b&&div) {
-		aClone = square_root(aClone);
+		a = square_root(a);
 		if(point_b - div > 0) {
-			ans*=aClone;
+			ans*=a;
 			point_b -= div;
 		}
 		div/=2;
