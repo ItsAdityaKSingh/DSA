@@ -110,7 +110,8 @@ double power(double a, double b) {
 	while(int_b--) {
 		ans*=a;
 	}
-
+	
+	if(!point_b) return ans;
 	double div = 0.5;
 	while(point_b&&div) {
 		a = square_root(a);
