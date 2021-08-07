@@ -66,29 +66,69 @@
 @@@@@@@@@&             &@@@@@@@@@@@@@@@@#            &@@@@@@@@@@@@@@@
 @@@@@@@@%              @@@@@@@@@@@@@@@@@%           *&@@@@@@@@@@@@@@@
 @@@@@#                 @@@@@@@@@@@@@@@@@%               /@@@@@@@@@@@@
-@@@@(                  @@@@@@@@@@@@@@@@@\            .    .@@@@@@@@@@
+@@@@(                  @@@@@@@@@@@@@@@@@/            .    .@@@@@@@@@@
 @@@% (*%@%@@@#         &@@@@@@@@@@@@@@@@,         %@@@@&.#@ @@@@@@@@@
 @@@.   %*@#(@@@        @@@@@@@@@@@@@@@@@*        %@@%(@@#  .,@@@@@@@@
 @@%               ,#@@@@@@@@@@@@@@@@@@@@@@%*.                @@@@@@@@
 @@@@&*        .#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#.           @@@@@@@*/
 
-// Random Number generator 
+#include<stdio.h>
 
-#include<iostream>
-#include<string>
-#define ll long long
-using namespace std;
+// implementation of binary search
+// to compute A to the power B
 
-string seed;
-ll digits;
+double max(double a, double b) {
+	if(a>b) return a;
+	return b;
+}
 
-ll nextRand() {
-    ll n = stoi(seed);
-    cout<<n;
+double square_root(double n) {
+	double hi = max(n,1);
+	double lo = 0;
+	double mid = (hi + lo)/2;
+	double u,l;
+	while(1) {
+		u = hi; l = lo;
+		mid = (hi + lo)/2;
+		if(mid*mid<n) {
+			lo = mid;
+		}
+		else if(mid*mid>n) {
+			hi = mid;
+		}
+
+		if(hi==u&&lo==l) {
+			return mid;
+		}
+	}
+}
+
+double power(double a, double b) {
+	long long int int_b = (long long int) b;
+	double point_b = b - int_b;
+	double ans = 1;
+	while(int_b--) {
+		ans*=a;
+	}
+	
+	if(!point_b) return ans;
+	double div = 0.5;
+	while(point_b&&div) {
+		a = square_root(a);
+		if(point_b - div > 0) {
+			ans*=a;
+			point_b -= div;
+		}
+		div/=2;
+		if(point_b < 0.000000000001 && div < 0.000000000001) {
+			return ans;
+		}
+	}
 }
 
 int main() {
-    cin>>digits;
-    cin>>seed;
-    nextRand();
+	double a,b;
+	scanf("%lf%lf",&a,&b);
+	printf("%.12lf",power(a,b));
+	return 0;
 }
