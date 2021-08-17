@@ -1,92 +1,86 @@
 // noprotect
 
-let canvas = document.createElement("canvas")
-canvas.id = "canvas"
+window.onload = function () {
+  window.onload = function() {
+    var c=document.getElementById("canvas");
+    var cxt=c.getContext("2d");
+    cxt.fillStyle="#FF0000";
+    cxt.fillRect(0,0,150,75);
+}
+Share
+}
 
+//middle square method:
 var digits = 10,
-    seed = 1234567890
-
-var s = seed
-let y = 0
-
+    seed = 1234568901;
 
 function nextRand() {
-  var n = (seed*seed).toString()
-  while(n.length<2*digits) {
-    n = '0' + n
+  var n = (seed * seed).toString();
+  while(n.length < digits * 2) {
+    n = "0" + n;
   }
-  var begin = parseInt(digits/2)
-  var end = begin + digits
-  seed = parseInt(n.substring(begin,end))
-  return seed
+  var start = Math.floor(digits / 2),
+      end = start + digits;
+  seed = parseInt(n.substring(start, end));
+  return seed;
 }
 
-
-function nextRandfloat() {
-  return nextRand()/9999999999;
+function nextRandFloat() {
+  return nextRand() / 9999999999;
 }
 
+for(var i = 0; i < 20; i++) {
+  console.log(nextRandFloat());
+}
 
-// var ct = 600, N = 0
-// for(var i=0;i<ct;i++) {
-//   let rand = nextRandfloat()
-//   if(rand>0.5) {
-//     N++
-//     console.log(rand)
+// var results = [];
+// for(var i = 0; i < 100000; i++) {
+//   var rand = nextRand();
+//   if(results[rand]) {
+//     break;
 //   }
+//   results[rand] = true;
 // }
-// console.log(N)
+// console.log(i);
 
-// var results = []
-// for(var i=0;i<ct;i++) {
-//   var rand = nextRand()
-//   if(results[rand]) break;
-//   results[rand] = true
+// linear congruential generator
+
+// var a = 1664525,
+//     c = 1013904223,
+//     m = Math.pow(2, 32),
+//     seed = 12234;
+
+// function nextRand() {
+//   seed = (a * seed + c) % m;
+//   return seed;
 // }
-// console.log(i)
+
+// function nextRandFloat() {
+//   return nextRand() / m;
+// }
 
 
-draw()
-var context = canvas.getContext("2d")
-console.log(canvas)
+var canvas = document.getElementById("canvas"),
+    context = canvas.getContext("2d");
+
+var y = 0;
 function draw() {
-   for(var x=0;x<600;x++){
-    //console.log(x)
-     if(nextRandfloat < 0.5) {
-       context.fillRect(0,0,600,600)
+  console.log("draw")
+  for(var x = 0; x < 550; x++) {
+    if(nextRandFloat() < 0.5) {
+      context.fillRect(x, y, 1, 1);
     }
   }
-  y++
-  console.log(y)
-  if(y<600) {
-    requestAnimationFrame(draw)
-    //draw()
-  }  
+  y++;
+  if(y < 600) {
+    requestAnimationFrame(draw);
+  }
 }
 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
