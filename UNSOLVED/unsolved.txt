@@ -1,0 +1,19 @@
+
+// probably something to do with euler's totient fn
+// https://www.geeksforgeeks.org/eulers-totient-function/
+https://codeforces.com/contest/1575/problem/G
+
+
+// sort of like "impose increasing" on an array by chopping off 
+// un-increasing elements, while minimising total sum chopped off
+// probably some implementation using std::map
+https://codeforces.com/contest/1313/problem/C2
+
+
+// mark nodes and query if node is marked in tree
+// no clue 
+https://www.codechef.com/REC2021/problems/REC20D/
+
+
+// something to do with inversions
+https://codeforces.com/problemset/problem/1526/D
