@@ -1,0 +1,6 @@
+
+// lagrange interpolation
+https://codeforces.com/blog/entry/82953
+
+// fft
+https://codeforces.com/blog/entry/43499
