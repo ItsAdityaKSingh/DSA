@@ -1,0 +1,1 @@
+{"name":"Local: matrix","url":"c:\\Users\\Ani\\Desktop\\DSA\\TEMPLATES\\matrix.cpp","tests":[{"id":1640998338509,"input":"3 4\n\n1 2 3 4\n5 6 7 8\n9 8 7 6\n\n4 3\n\n1 2 3\n4 5 6 \n7 8 9\n9 8 7\n","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"c:\\Users\\Ani\\Desktop\\DSA\\TEMPLATES\\matrix.cpp","group":"local","local":true}
