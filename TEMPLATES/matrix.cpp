@@ -46,29 +46,6 @@ struct matrix {
     };
 
 
-    ////// elementary row operations
-    matrix<T> swapRows(int row1,int row2){
-        matrix<T> res(rows,cols);
-        res.v=v;
-        swap(res.v[row1-1],res.v[row2-1]);
-        return res;
-    };
-    matrix<T> scaleRow(int row,T fac){
-        matrix<T> res(rows,cols);
-        res.v=v;
-        for(auto &el:res.v[row-1])
-            el*=fac;
-        return res;
-    };
-    matrix<T> addRows(int row1,int row2,T fac){
-        matrix<T> res(rows,cols);
-        res.v=v;
-        for(int i=0;i<cols;i++)
-            res.v[row1-1][i]+=fac*res.v[row2-1][i];
-        return res;
-    };
-
-
     ////// matrix methods
 
     // construct identity matrix of order n
@@ -89,53 +66,76 @@ struct matrix {
         for(int i=0;i<a.rows;i++){
             for(int j=0;j<b.cols;j++){
                 res.v[i][j]=0;
+                T sum=0;
                 for(int k=0;k<min(a.cols,b.rows);k++){
                     res.v[i][j]+=a.v[i][k]*b.v[k][j];
+                    sum+=a.v[i][k]*b.v[k][j];
                 }
             }
         }
         return res;
     };
-    // construct row reduced echelon form
-    matrix<T> RRE(){
-        matrix<T> res(rows,cols);
-        res.v=v;
-        sort(res.v.begin(),res.v.end(),[&](vector<T> x,vector<T> y){
-            for(int i=0;i<x.size();i++){
-                if(x[i]!=0&&y[i]==0)
+
+    // get inverse and echelon form
+    pair<matrix<T>,matrix<T>> RRE_inverse(){
+        int n=rows;
+        matrix<T> A(n,n);
+        A.v=v;
+        matrix<T> _INV=identity(n);
+        matrix<T> I=_INV;
+        matrix<T> _RRE=A;
+
+        vector<int> ind(n);
+        for(int i=0;i<n;i++)
+            ind[i]=i;
+        sort(ind.begin(),ind.end(),[&](int i1,int i2){
+            vector<T> x=A.v[i1];
+            vector<T> y=A.v[i2];
+            for(int i=0;i<n;i++){
+                if(x[i]&&!y[i])
                     return true;
-                else if(y[i]!=0&&x[i]==0)
+                if(y[i]&&!x[i])
                     return false;
             }
             return x[0]<y[0];
         });
-        for(int i=0;i<res.rows;i++){
+        for(int i=0;i<n;i++){
+            _INV.v[i]=I.v[ind[i]];
+            _RRE.v[i]=A.v[ind[i]];
+        }
+        for(int i=0;i<n;i++){
             T LNZ=0;
             int idx=-1;
-            for(int j=0;j<res.cols;j++){
-                if(res.get(i,j)!=0){
-                    LNZ=res.get(i,j);
+            for(int j=0;j<n;j++){
+                if(_RRE.get(i,j)!=0){
+                    LNZ=_RRE.get(i,j);
                     idx=j;
                     break;
                 }
             }
             if(idx==-1)
                 continue;
-            for(int j=0;j<res.cols;j++)
-                res.v[i][j]/=LNZ;
-            for(int j=0;j<res.rows;j++) {
+            for(int j=0;j<n;j++){
+                _RRE.v[i][j]/=LNZ;
+                _INV.v[i][j]/=LNZ;
+            }
+
+            for(int j=0;j<n;j++){
                 if(j==i)
                     continue;
-                T fac=res.get(j,idx);
-                if(fac==0)
+                T fac=_RRE.get(j,idx);
+                if(!fac)
                     continue;
-                for(int k=0;k<res.cols;k++)
-                    res.v[j][k]-=res.v[i][k]*fac;
+                for(int k=0;k<n;k++){
+                    _RRE.v[j][k]-=fac*_RRE.v[idx][k];
+                    _INV.v[j][k]-=fac*_INV.v[idx][k];
+                }
             }
         }
-        return res;
+        return make_pair(_RRE,_INV);
     }
 };
+
 
 int32_t main() {
     int n1,m1,n2,m2;
@@ -145,6 +145,8 @@ int32_t main() {
     cin>>n2>>m2;
     matrix<double> X2(n2,m2);
     X2.build();
-    X1.RRE().print();
+    auto rreinv = X1.RRE_inverse();
+    rreinv.first.print();
+    rreinv.second.print();
     X1.multiply(X1,X2).print();
 }
