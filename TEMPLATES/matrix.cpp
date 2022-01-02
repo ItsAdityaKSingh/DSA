@@ -8,7 +8,6 @@ struct matrix {
     vector<vector<T>> v;
 
     ////// basics
-    
     // constructor
     matrix(){};
     matrix(int n,int m){
@@ -44,7 +43,16 @@ struct matrix {
         }
         cout<<endl;
     };
-
+    // void debug(){
+    //     dbg(rows,cols);
+    //     cout<<endl;
+    //     fin(i,0,rows){
+    //         fin(j,0,cols)
+    //             cout<<v[i][j]<<" ";
+    //         cout<<endl;
+    //     }
+    //     cout<<endl<<endl;
+    // }
 
     ////// matrix methods
 
@@ -76,8 +84,47 @@ struct matrix {
         return res;
     };
 
-    // get inverse and echelon form
-    pair<matrix<T>,matrix<T>> RRE_inverse(){
+    matrix<T> RRE(){
+        matrix<T> res(rows,cols);
+        res.v=v;
+        sort(res.v.begin(),res.v.end(),[&](vector<T> x,vector<T> y){
+            for(int i=0;i<x.size();i++){
+                if(x[i]!=0&&y[i]==0)
+                    return true;
+                else if(y[i]!=0&&x[i]==0)
+                    return false;
+            }
+            return x[0]<y[0];
+        });
+        for(int i=0;i<res.rows;i++){
+            T LNZ=0;
+            int idx=-1;
+            for(int j=0;j<res.cols;j++){
+                if(res.get(i,j)!=0){
+                    LNZ=res.get(i,j);
+                    idx=j;
+                    break;
+                }
+            }
+            if(idx==-1)
+                continue;
+            for(int j=0;j<res.cols;j++)
+                res.v[i][j]/=LNZ;
+            for(int j=0;j<res.rows;j++) {
+                if(j==i)
+                    continue;
+                T fac=res.get(j,idx);
+                if(fac==0)
+                    continue;
+                for(int k=0;k<res.cols;k++)
+                    res.v[j][k]-=res.v[i][k]*fac;
+            }
+        }
+        return res;
+    }
+
+    // get inverse
+    matrix<T> inverse(){
         int n=rows;
         matrix<T> A(n,n);
         A.v=v;
@@ -132,8 +179,16 @@ struct matrix {
                 }
             }
         }
-        return make_pair(_RRE,_INV);
+        return _INV;
     }
+// BUG in inverse
+// -0.259259 0.777778 -0.074074 
+// 0.370370 -0.111111 -0.037037 
+// 0.148148 -0.444444 0.185185 
+
+// 1 3 1
+// 2 1 1
+// 4 0 7
 };
 
 
@@ -145,8 +200,6 @@ int32_t main() {
     cin>>n2>>m2;
     matrix<double> X2(n2,m2);
     X2.build();
-    auto rreinv = X1.RRE_inverse();
-    rreinv.first.print();
-    rreinv.second.print();
+    X1.RRE().print();
     X1.multiply(X1,X2).print();
 }
