@@ -55,7 +55,6 @@ struct matrix {
     // }
 
     ////// matrix methods
-
     // construct identity matrix of order n
     matrix<T> identity(int n){
         matrix<T> res(n,n);
@@ -83,7 +82,7 @@ struct matrix {
         }
         return res;
     };
-
+    // row reduced echelon form
     matrix<T> RRE(){
         matrix<T> res(rows,cols);
         res.v=v;
@@ -123,72 +122,33 @@ struct matrix {
         return res;
     }
 
+    matrix<T> gauss_jordan(){
+        matrix<T> gj(rows,2*cols);
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<rows;j++){
+                gj.v[i][rows+j]=(i==j?1:0);
+                gj.v[i][j]=v[i][j];
+            }
+        }
+        return gj.RRE();
+    }
+
     // get inverse
     matrix<T> inverse(){
-        int n=rows;
-        matrix<T> A(n,n);
-        A.v=v;
-        matrix<T> _INV=identity(n);
-        matrix<T> I=_INV;
-        matrix<T> _RRE=A;
-
-        vector<int> ind(n);
-        for(int i=0;i<n;i++)
-            ind[i]=i;
-        sort(ind.begin(),ind.end(),[&](int i1,int i2){
-            vector<T> x=A.v[i1];
-            vector<T> y=A.v[i2];
-            for(int i=0;i<n;i++){
-                if(x[i]&&!y[i])
-                    return true;
-                if(y[i]&&!x[i])
-                    return false;
-            }
-            return x[0]<y[0];
-        });
-        for(int i=0;i<n;i++){
-            _INV.v[i]=I.v[ind[i]];
-            _RRE.v[i]=A.v[ind[i]];
+        if(rows!=cols){
+            cerr<<"error: invalid operand for inverse\n";
+            exit(0);
         }
-        for(int i=0;i<n;i++){
-            T LNZ=0;
-            int idx=-1;
-            for(int j=0;j<n;j++){
-                if(_RRE.get(i,j)!=0){
-                    LNZ=_RRE.get(i,j);
-                    idx=j;
-                    break;
-                }
-            }
-            if(idx==-1)
-                continue;
-            for(int j=0;j<n;j++){
-                _RRE.v[i][j]/=LNZ;
-                _INV.v[i][j]/=LNZ;
-            }
-
-            for(int j=0;j<n;j++){
-                if(j==i)
-                    continue;
-                T fac=_RRE.get(j,idx);
-                if(!fac)
-                    continue;
-                for(int k=0;k<n;k++){
-                    _RRE.v[j][k]-=fac*_RRE.v[idx][k];
-                    _INV.v[j][k]-=fac*_INV.v[idx][k];
-                }
+        matrix<T> gj=gauss_jordan();
+        matrix<T> res(rows,rows);
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<rows;j++){
+                res.v[i][j]=gj.v[i][rows+j];
             }
         }
-        return _INV;
+        return res;
     }
-// BUG in inverse
-// -0.259259 0.777778 -0.074074 
-// 0.370370 -0.111111 -0.037037 
-// 0.148148 -0.444444 0.185185 
-
-// 1 3 1
-// 2 1 1
-// 4 0 7
+    // todo: add support for matrix<fraction>
 };
 
 
@@ -201,5 +161,7 @@ int32_t main() {
     matrix<double> X2(n2,m2);
     X2.build();
     X1.RRE().print();
+    X1.inverse().print();
+    X1.inverse().inverse().print();
     X1.multiply(X1,X2).print();
 }
