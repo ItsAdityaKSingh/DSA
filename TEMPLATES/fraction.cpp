@@ -18,21 +18,24 @@ void spit(auto x){for(auto e:x)cout<<e<<" ";cout<<endl;}
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)) && 1)
 
 struct fraction{
-	ll num;
-	ll den;
-	fraction(){
-		num=1;
-		den=1;
-	}
-	fraction(pair<ll,ll> a){
-        ll g=__gcd(a.F,a.S);
+    ll num;
+    ll den;
+    ll gcd(ll a,ll b){
+        return (!a&&!b?1:__gcd(abs(a),abs(b)));
+    }
+    fraction(){
+        num=1;
+        den=1;
+    }
+    fraction(pair<ll,ll> a){
+        ll g=gcd(a.F,a.S);
         num=a.F/g;
         den=a.S/g;
         if(den<0){
             num*=-1;
             den*=-1;
         }
-	}
+    }
     fraction inv(){
         fraction res;
         res.num=den;
@@ -43,30 +46,30 @@ struct fraction{
         }
         return res;
     }
-	fraction add(fraction a){
-		fraction res;
+    fraction operator + (fraction a){
+        fraction res;
         res.num=(num*a.den+a.num*den);
         res.den=den*a.den;
-        ll g=__gcd(res.num,res.den);
+        ll g=gcd(res.num,res.den);
         res.num/=g;
         res.den/=g;
         if(res.den<0){
             res.num*=-1;
             res.den*=-1;
         }
-		return res;
-	}
-    fraction subtract(fraction a){
+        return res;
+    }
+    fraction operator - (fraction a){
         fraction self;
         self.num=num,self.den=den;
         a.num*=-1;
-        return self.add(a);
+        return self+a;
     }
-    fraction multiply(fraction a){
+    fraction operator * (fraction a){
         fraction res;
         res.num=num*a.num;
         res.den=den*a.den;
-        ll g=__gcd(res.num,res.den);
+        ll g=gcd(res.num,res.den);
         res.num/=g;
         res.den/=g;
         if(res.den<0){
@@ -75,37 +78,49 @@ struct fraction{
         }
         return res;
     }
-    fraction divide(fraction a){
+    fraction operator / (fraction a){
         fraction self;
         self.num=num,self.den=den;
-        fraction res=a.inv().multiply(self);
+        fraction res=a.inv()*self;
         return res;
     }
-	void print(){
-		cout<<num<<"/"<<den<<endl;
-	}
+    void print(){
+        cout<<num<<"/"<<den;
+    }
 };
 
-void torment() {
-    ll a,b;
-    cin>>a>>b;
-    fraction f1({a,b});
-    ll c,d;
-    cin>>c>>d;
-    fraction f2({c,d});
-    // f1.multiply(f2).print();
-    // f1.inv().print();
-    // auto f3=f1.inv();
-    // f3.multiply(f2).print();
-    f1.divide(f2).print();
+bool testFrac(){
+    vector<vll> tc={
+        {1,1,1,1},
+        {3 ,4 ,5, 6},
+        {232, 1 ,1 ,232},
+        {-1733 ,-98233, -12323, -226},
+        {1 ,0, 0, 1},
+        {-1 ,0 ,0 ,1},
+        {1 ,0 ,-1, 0},
+        {4, 3, 3, 7},
+        {12 ,256, 9, 18},
+        {123, -196, -122, -99},
+    };
+    for(auto test:tc){
+        fraction f1({test[0],test[1]});
+        fraction f2({test[2],test[3]});
+        cout<<"[ ";
+        f1.print();
+        cout<<" ";
+        f2.print();
+        cout<<" ]: ";
+        (f1+f2).print();
+        cout<<" ";
+        (f1-f2).print();
+        cout<<" ";
+        (f1*f2).print();
+        cout<<" ";
+        (f1/f2).print();
+        cout<<endl;
+    }
 }
 
 int32_t main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);cout.tie(NULL);
-    int32_t wrong_answer_on_pretest_2=1;
-    // cin>>wrong_answer_on_pretest_2;
-    while(wrong_answer_on_pretest_2--){
-        torment();
-    }
+    testFrac();
 }
