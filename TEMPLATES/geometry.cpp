@@ -1,3 +1,42 @@
+/*                                █                                  
+                                 ███                                 
+                                ██  █                                
+                               ██ ████                               
+                              ██  █   █                              
+                             ██ ████ ███                             
+                            ██  █    █  █                            
+                           ██ ████  ██████                           
+                          ██  █   ███     █                          
+                         ██ ████ ██  █   ███                         
+                        ██  █    █ ████ ██  █                        
+                       ██ ████  ██ █    █ ████                       
+                      ██  █   ███  ██  ██ █   █                      
+                     ██ ████ ██  ███ ███  ██ ███                     
+                    ██  █    █ ███   █  ███  █  █                    
+                   ██ ████  ██ █  █ █████  ███████                   
+                  ██  █   ███  ████ █    ███      █                  
+                 ██ ████ ██  ███    ██  ██  █    ███                 
+                ██  █    █ ███  █  ██ ███ ████  ██  █                
+               ██ ████  ██ █  ██████  █   █   ███ ████               
+              ██  █   ███  ████     ████ ███ ██   █   █              
+             ██ ████ ██  ███   █   ██    █   █ █ ███ ███             
+            ██  █    █ ███  █ ███ ██ █  ███ ██ █ █   █  █            
+           ██ ████  ██ █  ███ █   █  ████   █  █ ██ ██████           
+          ██  █   ███  ████   ██ █████   █ █████ █  █     █          
+         ██ ████ ██  ███   █ ██  █    █ ██ █     █████   ███         
+        ██  █    █ ███  █ ██ █ ████  ██ █  ██   ██    █ ██  █        
+       ██ ████  ██ █  ███ █  █ █   ███  ████ █ ██ █  ██ █ ████       
+      ██  █   ███  ████   ████ ██ ██  ███    █ █  ████  █ █   █      
+     ██ ████ ██  ███   █ ██    █  █ ███  █  ██ ████   ███ ██ ███     
+    ██  █    █ ███  █ ██ █ █  █████ █  ██████  █   █ ██   █  █  █    
+   ██ ████  ██ █  ███ █  █ ████     ████     ████ ██ █ █ █████████   
+  ██  █   ███  ████   ████ █   █   ██   █   ██    █  █ █ █        █  
+ ██ ████ ██  ███   █ ██    ██ ███ ██ █ ███ ██ █  █████ █ ██      ███ 
+██  █    █ ███  █ ██ █ █  ██  █   █  █ █   █  ████     █ █ █    ██  █
+                can a pattern figure out the rule?
+*/
+
+
 #include<bits/stdc++.h>
 using namespace std;
 #define ll long long
@@ -179,13 +218,24 @@ struct line{
 	}
 	point intersect(line L){
         point res;
-        res.X=(L.Y_intercept.Y-Y_intercept.Y)/(slope-L.slope);
-        res.Y=slope*res.X+Y_intercept.Y;
+        if(L.slope.den==0||slope.den==0){
+            if(slope.den==0){
+                res.X=X_intercept.X;
+                res.Y=L.slope*res.X+L.Y_intercept.Y;
+            } else {
+                res.X=L.X_intercept.X;
+                res.Y=slope*res.X+Y_intercept.Y;
+            }
+        } else {
+            res.X=(L.Y_intercept.Y-Y_intercept.Y)/(slope-L.slope);
+            res.Y=slope*res.X+Y_intercept.Y;
+        }
         return res;
 	}
 };
 
 bool testLine(){
+    cout<<"LINE TEST"<<endl;
     vector<vector<ll>> tc={
         {0,0,1,1},
         {4,3,5,6},
@@ -208,9 +258,27 @@ bool testLine(){
     return true;
 }
 bool testIntersec(){
-
+    cout<<"INTERSECTION TEST"<<endl;
+    vector<vll> tc={
+        {4,3,3,4,5,1,9,1},
+        {0,1,8,1,2,7,2,9},
+        {0,1,1,0,0,0,1,1},
+        {-1733,-98233,-12323,226,-1733,-98233,-12323,-226},
+        {12,256,9,18,123,-196,-122,-99},
+        {-1 ,0 ,0 ,1,1 ,0 ,-1, 0},
+        {4, 3, 3, 7,12 ,256, 9, 18},
+    };
+    for(auto test:tc){
+        line A(point(test[0],test[1]),point(test[2],test[3]));
+        line B(point(test[4],test[5]),point(test[6],test[7]));
+        A.print();
+        B.print();
+        A.intersect(B).print();
+        cout<<endl;
+    }
 }
 bool testFrac(){
+    cout<<"FRACTION TEST"<<endl;
     vector<vll> tc={
         {1,1,1,1},
         {3 ,4 ,5, 6},
@@ -243,5 +311,7 @@ bool testFrac(){
 }
 
 int32_t main() {
+    testFrac();
     testLine();
+    testIntersec();
 }
