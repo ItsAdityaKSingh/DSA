@@ -123,26 +123,35 @@ struct fraction{
         fraction res=a.inv()*self;
         return res;
     }
-    void print(){
+    void print() const{
         cout<<num<<"/"<<den;
     }
 };
+bool operator <(const fraction& l, const fraction& r) {
+     return l.num*r.den<l.den*r.num;
+};
+bool operator >(const fraction& l, const fraction& r) {
+     return l.num*r.den>l.den*r.num;
+};
+bool operator ==(const fraction& l, const fraction& r) {
+     return l.num*r.den==l.den*r.num;
+};
 
 struct point{
-	fraction X;
-	fraction Y;
-	point(){
-		X=fraction({0,1});
-		Y=fraction({0,1});
-	}
-	point(ll a,ll b){
-		X=fraction({a,1});
-		Y=fraction({b,1});
-	}
-	point(fraction a,fraction b){
-		X=a;
-		Y=b;
-	}
+    fraction X;
+    fraction Y;
+    point(){
+        X=fraction({0,1});
+        Y=fraction({0,1});
+    }
+    point(ll a,ll b){
+        X=fraction({a,1});
+        Y=fraction({b,1});
+    }
+    point(fraction a,fraction b){
+        X=a;
+        Y=b;
+    }
     point(fraction a,ll b){
         X=a;
         Y=fraction({b,1});
@@ -155,7 +164,7 @@ struct point{
         X=fraction({p.F,1});
         Y=fraction({p.S,1});
     }
-    void print(){
+    void print() const{
         cout<<"{";
         X.print();
         cout<<" ";
@@ -163,24 +172,37 @@ struct point{
         cout<<"}"<<endl;
     }
 };
+bool operator <(const point& l, const point& r) {
+    if(l.X==r.X)
+        return l.Y<r.Y;
+    return l.X<r.X;
+};
+bool operator >(const point& l, const point& r) {
+    if(l.X==r.X)
+        return l.Y>r.Y;
+    return l.X>r.X;
+};
+bool operator ==(const point& l, const point& r) {
+     return (l.X==r.X && l.Y==r.Y);
+};
 
 struct line{
-	fraction slope;
-	point X_intercept;
-	point Y_intercept;
+    fraction slope;
+    point X_intercept;
+    point Y_intercept;
 
-	line(){
-		slope=fraction({0,1});
-		X_intercept=point(0,0);
-		Y_intercept=point(0,0);
-	}
+    line(){
+        slope=fraction({0,1});
+        X_intercept=point(0,0);
+        Y_intercept=point(0,0);
+    }
     line(pair<ll,ll> p1,pair<ll,ll> p2){
         line(point(p1),point(p2));
     }
-	line(point p1,point p2){
-		fraction num=p1.Y-p2.Y;
-		fraction den=p1.X-p2.X;
-		slope=num/den;
+    line(point p1,point p2){
+        fraction num=p1.Y-p2.Y;
+        fraction den=p1.X-p2.X;
+        slope=num/den;
         if(slope.den==0) {
             if(slope.num<0)
                 slope.num*=-1;
@@ -194,8 +216,8 @@ struct line{
             Y_intercept.Y=p1.Y-slope*p1.X;
             X_intercept.X=fraction({0,1})-Y_intercept.Y/slope;
         }
-	}
-	void print(){
+    }
+    void print(){
         if(slope.den==0){
             cout<<"X = ";
             X_intercept.X.print();
@@ -207,16 +229,16 @@ struct line{
             Y_intercept.Y.print();
             cout<<endl;
         }
-	}
-	fraction getX(fraction yy){
+    }
+    fraction getX(fraction yy){
         if(slope.den==0)
             return X_intercept.X;
         return (yy-Y_intercept.Y)/slope;
-	}
-	fraction getY(fraction xx){
+    }
+    fraction getY(fraction xx){
         return slope*xx + Y_intercept.Y;
-	}
-	point intersect(line L){
+    }
+    point intersect(line L){
         point res;
         if(L.slope.den==0||slope.den==0){
             if(slope.den==0){
@@ -231,8 +253,30 @@ struct line{
             res.Y=slope*res.X+Y_intercept.Y;
         }
         return res;
-	}
+    }
 };
+bool operator <(const line& l, const line& r){
+    if(l.slope==r.slope){
+        if(l.slope.den!=0)
+            return l.Y_intercept<r.Y_intercept;
+        else
+            return l.X_intercept<r.X_intercept;
+    }
+    return l.slope<r.slope;
+}
+bool operator >(const line& l, const line& r){
+    if(l.slope==r.slope){
+        if(l.slope.den!=0)
+            return l.Y_intercept>r.Y_intercept;
+        else
+            return l.X_intercept>r.X_intercept;
+    }
+    return l.slope>r.slope;
+}
+bool operator ==(const line& l, const line& r){
+    return l.slope==r.slope && l.X_intercept==r.X_intercept 
+            && l.Y_intercept==r.Y_intercept;
+}
 
 bool testLine(){
     cout<<"LINE TEST"<<endl;

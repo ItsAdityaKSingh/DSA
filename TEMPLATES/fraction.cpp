@@ -84,11 +84,19 @@ struct fraction{
         fraction res=a.inv()*self;
         return res;
     }
-    void print(){
+    void print() const{
         cout<<num<<"/"<<den;
     }
 };
-
+bool operator <(const fraction& l, const fraction& r) {
+     return l.num*r.den<l.den*r.num;
+};
+bool operator >(const fraction& l, const fraction& r) {
+     return l.num*r.den>l.den*r.num;
+};
+bool operator ==(const fraction& l, const fraction& r) {
+     return l.num*r.den==l.den*r.num;
+};
 bool testFrac(){
     vector<vll> tc={
         {1,1,1,1},
