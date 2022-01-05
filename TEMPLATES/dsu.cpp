@@ -2,11 +2,10 @@
 #define ll long long
 using namespace std;
 
-template <typename T>
-struct DSU{
+struct dsu{
     int N;
     vector<int> parent,c_size;
-    void init(int n){
+    dsu(int n){
         N=n;
         parent=vector<int>(N);
         c_size=vector<int>(N);
@@ -15,16 +14,16 @@ struct DSU{
             c_size[i]=1;
         }
     }
-
-    int find_set(int v){
+    int search(int v){
         if(v==parent[v])
             return v;
-        return parent[v]=find_set(parent[v]);
+        return parent[v]=search(parent[v]);
     }
-
-    void union_sets(int a,int b){
-        a=find_set(a);
-        b=find_set(b);
+    bool unite(int a,int b){
+        a=search(a);
+        b=search(b);
+        if(a==b)
+            return false;
         if(a!=b){
             if(c_size[a]<c_size[b]){
                 a-=b;
@@ -34,26 +33,25 @@ struct DSU{
             parent[b]=a;
             c_size[a]+=c_size[b];
         }
+        return true;
     }
 };
-
 
 int main() {
     ll n,m;
     cin>>n>>m;
-    DSU<int> d;
-    d.init(n);
+    dsu d(n);
     while(m--){
         ll a,b;
         cin>>a>>b;
-        d.union_sets(--a,--b);
+        d.unite(--a,--b);
     }
     ll q;
     cin>>q;
     while(q--){
         ll a,b;
         cin>>a>>b;
-        if(d.find_set(--a)==d.find_set(--b))
+        if(d.search(--a)==d.search(--b))
             cout<<"YES"<<endl;
         else
             cout<<"NO"<<endl;
