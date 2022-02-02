@@ -1,167 +1,101 @@
+// these train of thoughts linger 
+// as darkness falls in time
+
 #include<bits/stdc++.h>
 using namespace std;
+#define ll long long
+#define db long double
+#define pb push_back
+#define pf push_front
+#define ub upper_bound
+#define lb lower_bound
+#define F first
+#define S second
+#define vll vector<ll>
+#define fin(i,n1,n2) for(int i=n1;i<n2;i++)
+#define nif(i,n1,n2) for(int i=n1;i>n2;i--)
+#define all(x) x.begin(),x.end()
+#define m69 998244353
+#define m420 1000000007
+void spit(auto x){for(auto e:x)cout<<e<<" ";cout<<endl;}
+#define CHECK_BIT(var,pos) ((var) & (1<<(pos)) && 1)
 
 template<typename T>
-struct matrix {
-    int rows=0;
-    int cols=0;
-    vector<vector<T>> v;
-
-    ////// basics
-    // constructor
-    matrix(){};
-    matrix(int n,int m){
-        rows=n;
-        cols=m;
-        v=vector<vector<T>>(rows,vector<T>(cols,0));
-    };
-    void resize(int n,int m){
-        rows=n;
-        cols=m;
-        v=vector<vector<T>>(rows,vector<T>(cols,0));
-    };
-    // build matrix from stdin
-    void build(){
-        for(int i=0;i<rows;i++)
-            for(int j=0;j<cols;j++)
-                cin>>v[i][j];
-    };
-    // access the element at (i,j)
-    T get(int i,int j){
-        return v[i][j];
-    };
-    // shape
-    pair<int,int> shape(){
-        return {rows,cols};
-    };
-    // print
-    void print(){
-        for(int i=0;i<rows;i++){
-            for(int j=0;j<cols;j++)
-                cout<<v[i][j]<<" ";
-            cout<<endl;
-        }
-        cout<<endl;
-    };
-    // void debug(){
-    //     dbg(rows,cols);
-    //     cout<<endl;
-    //     fin(i,0,rows){
-    //         fin(j,0,cols)
-    //             cout<<v[i][j]<<" ";
-    //         cout<<endl;
-    //     }
-    //     cout<<endl<<endl;
-    // }
-
-    ////// matrix methods
-    // construct identity matrix of order n
-    matrix<T> identity(int n){
-        matrix<T> res(n,n);
-        for(int i=0;i<n;i++)
-            for(int j=0;j<n;j++)
-                res.v[i][j]=(i==j?1:0);
+struct mat{
+	int rows;
+    int cols;
+	vector<vector<T>> v;
+	mat(int _rows,int _cols) {
+		rows = _rows;
+        cols = _cols;
+		v=vector<vector<T>>(rows,vector<T>(cols,0));
+	}
+    vll &operator [](int i) {
+        return v[i];
+    }
+    mat operator *(mat other) {
+        // cur * other
+        // cur.cols == other.rows
+        mat res(rows,other.cols);
+        fin(i,0,rows) 
+            fin(j,0,other.cols) 
+                fin(k,0,cols) 
+                    res[i][j]=(res[i][j]+v[i][k]*other[k][j])%m420;
         return res;
     }
-    // matrix multiplication
-    matrix<T> multiply(matrix<T> a,matrix<T> b){
-        if(a.cols!=b.rows){
-            cerr<<"error: invalid operands for matrix multiplication\n";
-            exit(0);
-        }
-        matrix<T> res(a.rows,b.cols);
-        for(int i=0;i<a.rows;i++){
-            for(int j=0;j<b.cols;j++){
-                res.v[i][j]=0;
-                T sum=0;
-                for(int k=0;k<min(a.cols,b.rows);k++){
-                    res.v[i][j]+=a.v[i][k]*b.v[k][j];
-                    sum+=a.v[i][k]*b.v[k][j];
-                }
-            }
-        }
-        return res;
-    };
-    // row reduced echelon form
-    matrix<T> RRE(){
-        matrix<T> res(rows,cols);
-        res.v=v;
-        sort(res.v.begin(),res.v.end(),[&](vector<T> x,vector<T> y){
-            for(int i=0;i<x.size();i++){
-                if(x[i]!=0&&y[i]==0)
-                    return true;
-                else if(y[i]!=0&&x[i]==0)
-                    return false;
-            }
-            return x[0]<y[0];
-        });
-        for(int i=0;i<res.rows;i++){
-            T LNZ=0;
-            int idx=-1;
-            for(int j=0;j<res.cols;j++){
-                if(res.get(i,j)!=0){
-                    LNZ=res.get(i,j);
-                    idx=j;
-                    break;
-                }
-            }
-            if(idx==-1)
-                continue;
-            for(int j=0;j<res.cols;j++)
-                res.v[i][j]/=LNZ;
-            for(int j=0;j<res.rows;j++) {
-                if(j==i)
-                    continue;
-                T fac=res.get(j,idx);
-                if(fac==0)
-                    continue;
-                for(int k=0;k<res.cols;k++)
-                    res.v[j][k]-=res.v[i][k]*fac;
-            }
-        }
+    mat operator *(ll other) {
+        mat res(rows, cols);
+        fin(i,0,rows)
+            fin(j,0,cols)
+                res[i][j]=v[i][j]*other;
         return res;
     }
-
-    matrix<T> gauss_jordan(){
-        matrix<T> gj(rows,2*cols);
-        for(int i=0;i<rows;i++){
-            for(int j=0;j<rows;j++){
-                gj.v[i][rows+j]=(i==j?1:0);
-                gj.v[i][j]=v[i][j];
-            }
-        }
-        return gj.RRE();
-    }
-
-    // get inverse
-    matrix<T> inverse(){
-        if(rows!=cols){
-            cerr<<"error: invalid operand for inverse\n";
-            exit(0);
-        }
-        matrix<T> gj=gauss_jordan();
-        matrix<T> res(rows,rows);
-        for(int i=0;i<rows;i++){
-            for(int j=0;j<rows;j++){
-                res.v[i][j]=gj.v[i][rows+j];
-            }
-        }
+    mat operator +(mat other) {
+        mat<ll> res(rows,cols);
+        fin(i,0,rows)
+            fin(j,0,cols)
+                res[i][j]=v[i][j]+other[i][j];
         return res;
+    } 
+    void print() const{
+        fin(i,0,rows)
+            spit(v[i]);
+        cout<<"\n";
     }
-    // todo: add support for matrix<fraction>
 };
 
+mat<ll> rand_mat(ll r,ll c,ll mn,ll mx) {
+    mat<ll> res(r,c);
+    fin(i,0,r) {
+        fin(j,0,c) {
+            res[i][j]=(mn + (mx-mn)*(1.0*rand()/RAND_MAX));
+        }
+    }
+    return res;
+}
+
+void torment() {
+    ll n,mn,mx;
+    cin>>n>>mn>>mx;
+    mat<ll> A=rand_mat(n,n,mn,mx);
+    mat<ll> B=rand_mat(n,n,mn,mx);
+    A.print();
+    B.print();
+    (A+B).print();
+    (A*B).print();
+    (B*A).print();
+}
 
 int32_t main() {
-    int n1,m1,n2,m2;
-    cin>>n1>>m1;
-    matrix<double> X1(n1,m1);
-    X1.build();
-    cin>>n2>>m2;
-    matrix<double> X2(n2,m2);
-    X2.build();
-    X1.RRE().print();
-    X1.inverse().print();
-    X1.inverse().inverse().print();
-    X1.multiply(X1,X2).print();
+    srand(time(0));
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);cout.tie(NULL);
+    int32_t wrong_answer_on_pretest_2=1;
+    cin>>wrong_answer_on_pretest_2;
+    while(wrong_answer_on_pretest_2--){
+        torment();
+    }
 }
+
+// anger, happiness and sadness
+// won't mean a thing when...
