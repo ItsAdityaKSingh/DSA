@@ -23,7 +23,7 @@ void spit(auto x){for(auto e:x)cout<<e<<" ";cout<<endl;}
 template <typename T>
 struct segtree{
     int n;
-    int BASE_CASE=0;
+    T BASE_CASE=0;
     vector<T> tree;
     T (*f)(T a,T b);
     segtree(vector<T> &ar){
