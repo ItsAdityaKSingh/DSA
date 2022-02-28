@@ -31,19 +31,12 @@ struct spt {
         return min(a, b);
     };
 
-    spt(vector<T> ar) {
-        _n = ar.size();
-        while(1<<_log < _n) 
-            _log++;
-        table = vector<vector<T>>(_log, vector<T>(_n, 0));
-        logs = vector<int>(_n + 1);
-        build(ar);
-    }
-
-    spt(vector<T> ar, T (*mfp)(T a,T b)) {
+    spt(vector<T> ar, T (*mfp)(T a,T b) = [](T a, T b)->T{
+    	return min(a, b);
+    }) {
         f = mfp;
         _n = ar.size();
-        while(1<<_log < _n)
+        while(1<<_log <= _n)
             _log++;
         table = vector<vector<T>>(_log, vector<T>(_n, 0));
         logs = vector<int>(_n + 1);
@@ -67,8 +60,7 @@ struct spt {
     }
 
     T ask(int l, int r) {
-        int len = r-l+1;
-        int k = logs[len];
+        int len = r-l+1, k = logs[len];
         return f(table[k][l], table[k][r-(1<<k)+1]);
     }
 };
@@ -78,10 +70,12 @@ void torment() {
     cin >> n;
     vll v(n);
     fin(i, 0, n) {
-        v[i]=rand()%n+1;
+        v[i]=rand()%(100);
     }
     spit(v);
-    spt<ll> s(v);
+    spt<ll> s(v, [](ll a, ll b)->ll{
+        return max(a, b);
+    });
     ll q;
     cin >> q;
     while(q--) {
